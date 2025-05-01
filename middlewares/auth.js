@@ -17,19 +17,20 @@ exports.auth = async (req, res, next) => {
   // use id found in payload in addTodoDB to add userId to the saved todo
   req.id = payload.id;
   req.role = payload.role;
-  req.user = { id: payload.id, role: payload.role };
+  // req.user = { id: payload.id, role: payload.role };
   next();
 };
 
 // for authorization to know if the action can be taken or will be rejected
 // using return (req, res, next) because we have parameters sent to the function
-exports.restrictTo = (...roles) => {
+exports.blockRoles = (...roles) => {
   return (req, res, next) => {
     if (roles.includes(req.role)) {
       return next(
         new AppError(403, "you don't have permission to perform this action")
       );
     }
+    
     next();
   };
 };

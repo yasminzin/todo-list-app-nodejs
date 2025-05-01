@@ -5,7 +5,7 @@ const { catchAsync } = require("../utils/catchAsync");
 const todoModel = require("../models/todos");
 const AppError = require("../utils/appError");
 
-exports.getAllUsersDB = catchAsync(async (req, res ,next) => {
+exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await userModel.find();
   if (users.length === 0) {
     return next(new AppError(404, "No users found"));
@@ -13,12 +13,12 @@ exports.getAllUsersDB = catchAsync(async (req, res ,next) => {
   res.status(200).json({ stauts: "success", message: users });
 });
 
-exports.addUserDB = catchAsync(async (req, res, next) => {
+exports.addUser = catchAsync(async (req, res, next) => {
   const user = await userModel.create(req.body);
   res.status(201).json({ status: "success", data: user });
 });
 
-exports.deleteUserDB = catchAsync(async (req, res, next) => {
+exports.deleteUser = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   if (id != req.id && req.role == "user") {
     return next(new AppError(403, "you can't perform this action"));
@@ -32,7 +32,7 @@ exports.deleteUserDB = catchAsync(async (req, res, next) => {
     .json({ status: "success", message: "user deleted successfully" });
 });
 
-exports.updateUserDB = catchAsync(async (req, res, next) => {
+exports.updateUser = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const updatedDocument = req.body;
   if (id != req.id && req.role == "user") {
@@ -48,7 +48,11 @@ exports.updateUserDB = catchAsync(async (req, res, next) => {
   }
   return res
     .status(200)
-    .json({ status: "success", message: "user updated successfully", data: updatedDocument });
+    .json({
+      status: "success",
+      message: "user updated successfully",
+      data: updatedDocument,
+    });
 });
 
 exports.login = catchAsync(async (req, res, next) => {

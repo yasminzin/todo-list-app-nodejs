@@ -4,15 +4,24 @@ const usersControllers = require("../controllers/users");
 const { validation } = require("../middlewares/validation");
 const registerSchema = require("../validation/register.validation");
 const loginSchema = require("../validation/login.validation");
-const { auth, restrictTo } = require("../middlewares/auth");
+const { auth, blockRoles } = require("../middlewares/auth");
 
-router.get("/", auth, restrictTo("user") , usersControllers.getAllUsersDB);
+router.get("/", auth, blockRoles("user"), usersControllers.getAllUsers);
 
-router.post("/", validation(registerSchema), usersControllers.addUserDB);
+router.post(
+  "/",
+  validation(registerSchema.createUserSchema),
+  usersControllers.addUser
+);
 
-router.delete("/:id",auth, usersControllers.deleteUserDB);
+router.delete("/:id", auth, usersControllers.deleteUser);
 
-router.patch("/:id", auth, usersControllers.updateUserDB);
+router.patch(
+  "/:id",
+  auth,
+  validation(registerSchema.updateUserSchema),
+  usersControllers.updateUser
+);
 
 router.post("/login", validation(loginSchema), usersControllers.login);
 

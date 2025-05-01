@@ -1,6 +1,6 @@
 const express = require("express");
 const TodoControllers = require("../controllers/todos");
-const { auth, restrictTo } = require("../middlewares/auth");
+const { auth, blockRoles } = require("../middlewares/auth");
 const { validation } = require("../middlewares/validation");
 const todoSchema = require("../validation/todo.validation");
 
@@ -9,18 +9,26 @@ const todoSchema = require("../validation/todo.validation");
 const router = express.Router();
 
 // make sure that all routes you must be login first to access them
-router.use(auth)
+router.use(auth);
 
-router.get("", restrictTo("user"), TodoControllers.getAllTodosDB);
+router.get("", blockRoles("user"), TodoControllers.getAllTodos);
 
-router.post("", validation(todoSchema), TodoControllers.addTodoDB);
+router.post(
+  "",
+  validation(todoSchema.createTodoSchema),
+  TodoControllers.addTodo
+);
 
-router.patch("/:id", TodoControllers.editTodoDB);
+router.patch(
+  "/:id",
+  validation(todoSchema.updateTodoSchema),
+  TodoControllers.editTodo
+);
 
-router.delete("/:id", TodoControllers.deleteTodoDB);
+router.delete("/:id", TodoControllers.deleteTodo);
 
 // apply auth only in this
 // router.get("/:id/db", auth, TodoControllers.getTodoByIdDB);
-router.get("/:id", TodoControllers.getTodoByIdDB);
+router.get("/:id", TodoControllers.getTodoById);
 
 module.exports = router;
